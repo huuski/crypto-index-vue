@@ -95,7 +95,7 @@ export default {
       this.$http({
         method: "post",
         url: "https://localhost:5001/api/crypto/btc",
-        header: {
+        headers: {
           "Access-Control-Allow-Origin": "*",
           Authorization: localStorage.getItem("crypto-auth-token"),
         },
@@ -156,16 +156,26 @@ export default {
     this.$http({
       method: "get",
       url: "https://localhost:5001/api/crypto/btc",
-      header: {
+      headers: {
         "Access-Control-Allow-Origin": "*",
         Authorization: localStorage.getItem("crypto-auth-token"),
       },
-    }).then((response) => {
-      this.currencies[0].value = response.data?.bpi?.usd.usdRate;
-      this.currencies[1].value = response.data?.bpi?.brl.usdRate;
-      this.currencies[2].value = response.data?.bpi?.eur.usdRate;
-      this.currencies[3].value = response.data?.bpi?.cad.usdRate;
-    });
+    })
+      .then((response) => {
+        this.currencies[0].value = response.data?.bpi?.usd.usdRate;
+        this.currencies[1].value = response.data?.bpi?.brl.usdRate;
+        this.currencies[2].value = response.data?.bpi?.eur.usdRate;
+        this.currencies[3].value = response.data?.bpi?.cad.usdRate;
+      })
+      .catch((error) => {
+        this.$swal({
+          position: "top-right",
+          icon: "error",
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      });
   },
   directives: { money: VMoney },
 };

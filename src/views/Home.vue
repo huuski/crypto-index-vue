@@ -104,7 +104,7 @@ export default {
       this.$http({
         method: "get",
         url: `https://localhost:5001/api/crypto/btc?quantity=${this.btcAmount}`,
-        header: {
+        headers: {
           "Access-Control-Allow-Origin": "*",
           Authorization: localStorage.getItem("crypto-auth-token"),
         },
@@ -120,7 +120,7 @@ export default {
     this.$http({
       method: "get",
       url: `https://localhost:5001/api/crypto/btc?quantity=${this.btcAmount}`,
-      header: {
+      headers: {
         "Access-Control-Allow-Origin": "*",
         Authorization: localStorage.getItem("crypto-auth-token"),
       },
@@ -129,7 +129,16 @@ export default {
       this.currencies[1].value = response.data?.bpi?.brl.rate;
       this.currencies[2].value = response.data?.bpi?.eur.rate;
       this.currencies[3].value = response.data?.bpi?.cad.rate;
-    });
+    })
+    .catch((error) => {
+          this.$swal({
+            position: "top-right",
+            icon: "error",
+            title: error.response.data.message,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        });
   },
 };
 </script>
