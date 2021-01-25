@@ -58,12 +58,7 @@
 </template>
 
 <script>
-import { loader } from "../components/Loader";
-
 export default {
-  components: {
-    loader,
-  },
   data() {
     return {
       isLoading: true,
