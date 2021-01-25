@@ -94,7 +94,7 @@ export default {
     save() {
       this.$http({
         method: "post",
-        url: "https://localhost:5001/api/crypto/btc",
+        url: "http://localhost:5001/api/crypto/btc",
         headers: {
           "Access-Control-Allow-Origin": "*",
           Authorization: localStorage.getItem("crypto-auth-token"),
@@ -155,7 +155,7 @@ export default {
   mounted() {
     this.$http({
       method: "get",
-      url: "https://localhost:5001/api/crypto/btc",
+      url: "http://localhost:5001/api/crypto/btc",
       headers: {
         "Access-Control-Allow-Origin": "*",
         Authorization: localStorage.getItem("crypto-auth-token"),

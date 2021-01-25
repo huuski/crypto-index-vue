@@ -103,7 +103,7 @@ export default {
     getCurrency() {
       this.$http({
         method: "get",
-        url: `https://localhost:5001/api/crypto/btc?quantity=${this.btcAmount}`,
+        url: `http://localhost:5001/api/crypto/btc?quantity=${this.btcAmount}`,
         headers: {
           "Access-Control-Allow-Origin": "*",
           Authorization: localStorage.getItem("crypto-auth-token"),
@@ -119,9 +119,10 @@ export default {
   mounted() {
     this.$http({
       method: "get",
-      url: `https://localhost:5001/api/crypto/btc?quantity=${this.btcAmount}`,
+      url: `http://localhost:5001/api/crypto/btc?quantity=${this.btcAmount}`,
       headers: {
         "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accepted",
         Authorization: localStorage.getItem("crypto-auth-token"),
       },
     }).then((response) => {
@@ -131,6 +132,7 @@ export default {
       this.currencies[3].value = response.data?.bpi?.cad.rate;
     })
     .catch((error) => {
+      console.log(error);
           this.$swal({
             position: "top-right",
             icon: "error",

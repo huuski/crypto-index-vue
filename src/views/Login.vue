@@ -68,8 +68,12 @@ export default {
       console.log("login");
       this.$http({
         method: "post",
-        url: "https://localhost:5001/api/login",
-        header: { "Access-Control-Allow-Origin": "*" },
+        url: "http://localhost:5001/api/login",
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers":
+            "Origin, X-Requested-With, Content-Type, Accepted",
+        },
         data: { email: this.email, password: this.password },
       })
         .then((response) => {
