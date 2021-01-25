@@ -1,33 +1,55 @@
 <template>
   <div>
-    <div class="d-flex justify-content-center btn-container">
-      <button
-        class="currency-btn btn btn-lg btn-primary btn-block text-uppercase"
-        @click="update"
-      >
-        Alterar valor monetário
-      </button>
-    </div>
-    <div class="d-flex justify-content-center">
-        <h3 style="color: black;font-size:100px ;">1</h3>
-        <img class="img-btc" src="https://www.flaticon.com/svg/vstatic/svg/25/25180.svg?token=exp=1611368591~hmac=c31b3355aac09e1630a650e513a2e178" alt="">
-    </div>
-    <div class="d-flex justify-content-center">
-      <div v-for="currency in currencies" :key="currency.name" class="col-md-3">
-        <div class="currency-card">
-          <div>
-            <img
-              class="currency-card__flag"
-              :src="currency.flag"
-              :alt="currency.name"
-            />
-          </div>
-          <div class="currency-card__description">
-            {{ currency.description }}
-          </div>
-          <div class="currency-card__name">{{ currency.name }}</div>
-          <div>
-            <div class="currency-card__value">{{ currency.value }}</div>
+    <Loader v-if="!isLoading" />
+    <div v-else>
+      <div class="d-flex justify-content-center btn-container">
+        <button
+          class="currency-btn btn btn-lg btn-primary btn-block text-uppercase"
+          @click="update"
+        >
+          Alterar valor monetário
+        </button>
+      </div>
+      <div class="d-flex justify-content-center">
+        <img
+          class="img-btc"
+          src="https://www.flaticon.com/svg/vstatic/svg/25/25180.svg?token=exp=1611368591~hmac=c31b3355aac09e1630a650e513a2e178"
+          alt=""
+        />
+      </div>
+      <br />
+      <div class="d-flex justify-content-center">
+        <div class="col-md-3">
+          <b-form-spinbutton
+            @change="getCurrency"
+            v-model="btcAmount"
+            min="1"
+            max="100"
+          ></b-form-spinbutton>
+        </div>
+      </div>
+      <br /><br />
+      <div class="d-flex justify-content-center">
+        <div
+          v-for="currency in currencies"
+          :key="currency.name"
+          class="col-md-3"
+        >
+          <div class="currency-card">
+            <div>
+              <img
+                class="currency-card__flag"
+                :src="currency.flag"
+                :alt="currency.name"
+              />
+            </div>
+            <div class="currency-card__description">
+              {{ currency.description }}
+            </div>
+            <div class="currency-card__name">{{ currency.name }}</div>
+            <div>
+              <div class="currency-card__value">{{ currency.value }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -36,10 +58,17 @@
 </template>
 
 <script>
+import { loader } from "../components/Loader";
+
 export default {
+  components: {
+    loader,
+  },
   data() {
     return {
+      isLoading: true,
       token: null,
+      btcAmount: 1,
       currencies: [
         {
           name: "USD",
@@ -76,11 +105,26 @@ export default {
     update() {
       this.$router.push({ name: "exchange" });
     },
+    getCurrency() {
+      this.$http({
+        method: "get",
+        url: `https://localhost:5001/api/crypto/btc?quantity=${this.btcAmount}`,
+        header: {
+          "Access-Control-Allow-Origin": "*",
+          Authorization: localStorage.getItem("crypto-auth-token"),
+        },
+      }).then((response) => {
+        this.currencies[0].value = response.data?.bpi?.usd.rate;
+        this.currencies[1].value = response.data?.bpi?.brl.rate;
+        this.currencies[2].value = response.data?.bpi?.eur.rate;
+        this.currencies[3].value = response.data?.bpi?.cad.rate;
+      });
+    },
   },
   mounted() {
     this.$http({
       method: "get",
-      url: "https://localhost:5001/api/crypto/btc",
+      url: `https://localhost:5001/api/crypto/btc?quantity=${this.btcAmount}`,
       header: {
         "Access-Control-Allow-Origin": "*",
         Authorization: localStorage.getItem("crypto-auth-token"),
@@ -134,7 +178,7 @@ export default {
 }
 
 .btn-container {
-margin-bottom: 48px;
+  margin-bottom: 48px;
 }
 
 .currency-btn {
@@ -142,7 +186,11 @@ margin-bottom: 48px;
 }
 
 .img-btc {
-    width: 7%;
-    margin-top: -16px;
+  width: 7%;
+  margin-top: -16px;
+}
+
+.loader {
+  margin: 16px;
 }
 </style>
